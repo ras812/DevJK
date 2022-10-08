@@ -9,6 +9,7 @@ namespace TypesInCSharp
     {
         static void Main(string[] args)
         {
+            // Start program
             MainMenu m = new MainMenu();
             m.StartMainMenu();
         }
