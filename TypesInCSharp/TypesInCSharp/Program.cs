@@ -12,6 +12,7 @@ namespace TypesInCSharp
             // Start program
             MainMenu m = new MainMenu();
             m.StartMainMenu();
+            // End program
         }
     }
 }
