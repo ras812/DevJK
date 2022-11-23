@@ -10,8 +10,11 @@ namespace TypesInCSharp
         static void Main(string[] args)
         {
             // Start program
-            MainMenu m = new MainMenu();
-            m.StartMainMenu();
+            // try
+            var menu = new MainMenu(); //переменная как класс
+            //MainMenu menu = new MainMenu();
+            menu.StartMainMenu();
+            // catch
             // End program
         }
     }

@@ -9,38 +9,62 @@ namespace TypesInCSharp
             DisplayMainMenu();
             while (true)
             {
-                char c = Handlers.InPutHandler();
-                if (c == '1')
+                char inputChar = Handlers.InPutHandler();
+
+                switch (inputChar)
                 {
-                    ShowAllTypeInfo sati = new ShowAllTypeInfo();
-                    sati.StartShowAllTypeInfo();
-                    break;
+                    case '1':
+                        var showAllType = new ShowAllTypeInfo();
+                        showAllType.StartShowAllTypeInfo();
+                        break;
+                    case '2':
+                            var selectType = new SelectTypeInfo();
+                            selectType.StartSelectTypeInfo();
+                            break;
+                    case '3':
+                        var consoleView = new ConsoleView();
+                        consoleView.StartChangeConsoleView();
+                        break;
+                    case '0':
+                        Console.Clear();
+                        Console.WriteLine($"PROGRAM TERMINATED WITH ERROR [0]");
+                        Environment.Exit(0);
+                        break;
+                    //default:
+                    //    continue;
                 }
-                else if (c == '2')
-                {
-                    SelectTypeInfo sti = new SelectTypeInfo();
-                    sti.StartSelectTypeInfo();
-                    break;
-                }
-                else if (c == '3')
-                {
-                    ConsoleView cv = new ConsoleView();
-                    cv.StartChangeConsoleView();
-                    break;
-                }
-                else if (c == '0')
-                {
-                    Console.Clear();
-                    Console.WriteLine($"PROGRAM TERMINATED WITH ERROR [0]");
-                    Environment.Exit(0);
-                }
+
+                //if (c == '1')
+                //{
+                //    var showAllType = new ShowAllTypeInfo();
+                //    showAllType.StartShowAllTypeInfo();
+                //    break;
+                //}
+                //else if (c == '2')
+                //{
+                //    var selectType = new SelectTypeInfo();
+                //    selectType.StartSelectTypeInfo();
+                //    break;
+                //}
+                //else if (c == '3')
+                //{
+                //    var consoleView = new ConsoleView();
+                //    consoleView.StartChangeConsoleView();
+                //    break;
+                //}
+                //else if (c == '0')
+                //{
+                //    Console.Clear();
+                //    Console.WriteLine($"PROGRAM TERMINATED WITH ERROR [0]");
+                //    Environment.Exit(0);
+                //}
             }
         }
 
 		private void DisplayMainMenu()
 		{
             Console.Clear();
-            Console.WriteLine($"=== WELLCOME ===\n"+
+            Console.WriteLine($"=== WELLCOME ===\n" +
                               $"===    to    ===\n" +
                               $"=== TYPEINFO ===\n" +
                               $"================\n" +
