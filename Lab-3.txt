@@ -1,0 +1,137 @@
+--Задание 1. Знакомство с БД dbSQL
+--3)	Раскройте контейнер БД dbSQL и ознакомьтесь со списком таблиц
+--a.	Как называется и в какой схеме находится таблица, содержащая список сотрудников?
+"HR"."Employees"
+--b.	Как называется и в какой схеме находится таблица, содержащая список клиентов?
+"Sales"."Customers"
+--4)	Изучите перечень полей в каждой пользовательской таблице БД dbSQL
+--5)	Как называется и в какой схеме находится таблица, содержащая данные о заказах?
+"Sales"."Orders"
+--a.	В каком поле таблицы Заказы содержится информация об адресе доставки?
+shipaddress
+--b.	Данные какого типа хранятся в столбце Дата заказа?
+orderdate(date)
+--c.	Какое поле используется в качестве Первичного ключа?
+orderid
+--6)	Создайте диаграмму БД dbSQL (схему БД)
+--7)	Изучите связи между таблицами.
+--a.	Какое поле в таблице Заказы используется в качестве внешнего ключа для связи с таблицей Сотрудники?
+empid
+--b.	Какое поле в таблице Сотрудники используется для связи записей внутри таблицы (Начальник – Подчиненный)?
+
+--Задание 2. Написание простых запросов (работаем с БД dbTSQL)
+--Создание элементарных запросов без проекции (все столбцы) и фильтрации 
+--1.	Выведите список всех продуктов
+
+ select *
+ from "Production"."Products";
+
+--2.	Выведите список всех заказчиков
+
+select *
+from "Sales"."Customers";
+
+--3.	Выведите список всех сотрудников
+
+select *
+from "HR"."Employees";
+
+--Создание запросов с проекцией и обработкой столбцов
+--1.	Выведите названия страны, региона и города, в которых проживают заказчики
+
+select (sc.country || ' ' || sc.region || ' ' || sc.city) as customers_regional_data
+from "Sales"."Customers" as sc;
+
+--2.	Выведите название и стоимость продуктов, упорядочив результирующую выборку в порядке убывания стоимости
+
+select productname, unitprice
+from "Production"."Products"
+order by unitprice desc;
+
+--Задание 3. Написание запросов с вычисляемыми столбцами
+--1.	На основе таблицы Employees напишите запрос, возвращающий таблицу из 3 столбцов: Фамилия сотрудника, Имя сотрудника, e-mail адрес.
+--Столбец e-mail адрес должен быть сформирован в соответствие со следующим шаблоном: <имя>.<фамилия>@<названиеорганизации>.ru. 
+--Название организации придумайте сами! Полученные e-mail должны быть в нижнем регистре. 
+--Символы, недопустимые в адресе эл.почты, должны быть заменены нижним подчеркиванием.
+
+select firstname as first_name, 
+		lastname as last_name, 
+		lower( 
+				replace (
+							(he.firstname || '.' || he.lastname || '@concord.ru'), ' ', '_'
+						)
+			 ) as e_mail
+from "HR"."Employees" as he;
+
+--2.	На основании данных ТОЛЬКО таблицы Products (запрос только к одной таблице!) сформируйте таблицу из трех столбцов: 
+--Номер категории, Название продукта и Название категории. 
+--Название категории должно выводиться в соответствии с ее номером:
+--1 - 'Beverages'; 
+--2 - 'Condiments'; 
+--3 - 'Confections'; 
+--4 - 'Dairy Products'; 
+--5 - 'Grains/Cereals'; 
+--6 - 'Meat/Poultry';  
+--7 - 'Produce'; 
+--8 - 'Seafood'. 
+--Для категорий, не попавших в данный список, необходимо вернуть значение  'Other'
+
+select categoryid as category_number, 
+		productname as product_name,
+		case categoryid
+			when 1 then 'Beverages'
+			when 2 then 'Condiments'
+			when 3 then 'Confections'
+			when 4 then 'Dairy Products'
+			when 5 then 'Grains/Cereals'
+			when 6 then 'Meat/Poultry'
+			when 7 then 'Produce'
+			when 8 then 'Seafood'
+		else 'Other'
+		end as category_name
+from "Production"."Products";
+
+--3.	Напишите запрос к таблице Customers, возвращающий таблицу из 3 столбцов: contactname, LName и FName. 
+--Значение в столбцах LName и FName должны вычисляться на основе данных столбца contactname. (Можно использовать регулярные выражения!)
+
+select sc.contactname as contact_name,
+	   trim(
+			substring(
+						sc.contactname for (position(',' in sc.contactname) - 1)
+					 )
+		   ) as l_name,
+	   trim(
+			substring(
+						sc.contactname from (position(',' in sc.contactname) + 1) 
+					 )
+		   ) as f_name
+from "Sales"."Customers" as sc;
+
+--4.	Напишите запрос к таблице OrderDetails, возвращающий таблицу из 3 столбцов: unitprice, qty и LineTotal. 
+--Значение в столбце LineTotal – является расчетной величиной с учетом количества товара, цены и скидки.
+
+select unitprice as unit_price, 
+		qty as quantity,
+		(
+			qty::numeric * unitprice::numeric  * (1 - discount)
+		)::money 
+		as line_total
+from "Sales"."OrderDetails";
+
+--Задание 4. Написание запросов с сортировкой
+--1.	Выведите 10 самых дорогих товаров.
+--!!!!!!!!!!!! НЕУТОЧНЕНЫ СТОЛБЦЫ ВЫВОДА
+
+select productname as ten_most_expensive_products, 
+		pp.unitprice as price
+from "Production"."Products" as pp
+order by pp.unitprice desc
+limit 10;
+
+--2.	Выведите из таблицы Orders строки с 51 по 100, упорядоченные по дате заказа
+--!!!!!!!!!!!!!!!!!! НЕУТОЧНЕН ПОРЯДОК СОРТИРОВКИ по ВОЗРАСТАНИЮ/УБЫВАНИЮ
+
+select *
+from "Sales"."Orders" as so
+order by so.orderdate asc 
+limit 50 offset 50;
